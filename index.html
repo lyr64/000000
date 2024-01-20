@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+<br>
+<progress max="546570759" value="0" id="progress"></progress><span id="span"></span>
+<button onclick="this.hidden='hidden';fn()">下载</button>
+<pre id="pre">
+cmd  copy /b 0+1+2+3+4+5+6+7+8+9+10+11+12+13+14+15+16+17+18+19+20=21.apk
+暂不支持手机
+</pre>
+<script>
+function fn(){
+    var d = 0;
+    var o = []
+    var num = 21
+    var proxy = ""
+    if(~location.href.indexOf("?proxy")){
+        proxy = location.href.split('?proxy=')[1];
+    }
+    function cbk(i,res){
+            o[i] = res;
+            if(0==--num){
+                var a = document.createElement('a');
+                a.href = URL.createObjectURL(new Blob(o));
+                a.download = '21.apk'
+                a.click();
+            } 
+    }
+    function fetch(i,p,time){
+        var xhr = new XMLHttpRequest();
+        xhr.responseType ="arraybuffer"
+        xhr.id = i;
+        xhr.p = p;
+        xhr.update = function(e){
+            d += e.loaded - this.p;
+            this.p = e.loaded
+            progress.value = d 
+            span.innerText = (d / 546570759 * 100).toFixed(2) + "%";
+        }
+        xhr.onprogress =  function(e) {
+            if (e.lengthComputable) {
+                this.update(e)
+            }
+        }
+        xhr.onerror = xhr.onabort = xhr.ontimeout = function(e){
+            pre.innerText += '\n文件 '+this.id + " 请求失败: " + time + "ms 后重试"
+            setTimeout(function(){
+                fetch(i,xhr.p,time*2);
+            },time);
+        }
+        xhr.onload = function(){
+            if(xhr.status >= 400){
+                fetch(i,p,time*2);
+            }else{
+                cbk(xhr.id,xhr.response)
+            }
+        }
+        xhr.open("GET",proxy + i);
+        xhr.send()
+    }
+    for(var i = 0;i < num;i++){
+        fetch(i,0,1);
+    }
+}
+</script>
+</body>
+</html>
