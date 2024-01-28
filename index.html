@@ -10,11 +10,11 @@
 <button onclick="this.hidden='hidden';fn()">下载</button>
 <pre id="pre">
 cmd  copy /b 0+1+2+3+4+5+6+7+8+9+10+11+12+13+14+15+16+17+18+19+20=21.apk
-暂不支持手机
+手机可以使用 Chrome 或者 Firefox 下载
 </pre>
 <script>
 function fn(){
-    var d = 0;
+    var d = 0,dd=0;
     var o = []
     var num = 21
     var proxy = ""
@@ -39,7 +39,6 @@ function fn(){
             d += e.loaded - this.p;
             this.p = e.loaded
             progress.value = d 
-            span.innerText = (d / 546570759 * 100).toFixed(2) + "%";
         }
         xhr.onprogress =  function(e) {
             if (e.lengthComputable) {
@@ -65,6 +64,13 @@ function fn(){
     for(var i = 0;i < num;i++){
         fetch(i,0,1);
     }
+    function bytesize(e){var t=arguments.length>1&&void 0!==arguments[1]?arguments[1]:2;if(0===e)return"0 Bytes";var n=1024,r=t<0?0:t,a=["Bytes","KB","MB","GB","TB","PB","EB","ZB","YB"],o=Math.floor(Math.log(e)/Math.log(n));return parseFloat((e/Math.pow(n,o)).toFixed(r))+" "+a[o]}
+    function show(){
+        span.innerText = (d / 546570759 * 100).toFixed(2) + "% 速度："+ bytesize(d-dd) + "/s" + " 还剩：" + bytesize(546570759-d);
+        dd = d
+    }
+    setInterval(show,1000)
+    show()
 }
 </script>
 </body>
